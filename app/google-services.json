@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "905963961192",
+    "project_id": "x-chat-ada00",
+    "storage_bucket": "x-chat-ada00.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905963961192:android:d2e596cc987d910356b4dd",
+        "android_client_info": {
+          "package_name": "com.example.xchat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBN7S8VmQKbuFdiN2qPpaU5eO9aYLP-a4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
