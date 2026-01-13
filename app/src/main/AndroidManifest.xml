@@ -2,18 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"
-        android:usesPermissionFlags="neverForLocation"
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-        />
-
-
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"
+        android:usesPermissionFlags="neverForLocation" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-feature
@@ -33,13 +31,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.XChat"
         tools:targetApi="35">
+        <activity
+            android:name=".Call_feature.OutgoingCallActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Call_feature.IncomingCallActivity"
+            android:exported="false" />
 
-        <service
-            android:name=".pushNotifiAndCall.SocketService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="dataSync" />
-            />
+            <meta-data
+                android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".ChatFunctions.ImageViewActivity"

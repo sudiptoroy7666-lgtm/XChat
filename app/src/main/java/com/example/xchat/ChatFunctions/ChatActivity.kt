@@ -1,6 +1,8 @@
 package com.example.xchat.ChatFunctions
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -16,12 +18,16 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.xchat.Call_feature.Call
+import com.example.xchat.Call_feature.OutgoingCallActivity
 import com.example.xchat.MainFragments.ProfileFragment
 import com.example.xchat.ProfileActivity
 import com.example.xchat.databinding.ActivityChatBinding
@@ -29,6 +35,7 @@ import com.example.xchat.databinding.ActivityChatBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
@@ -36,6 +43,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import android.app.NotificationManager
+import com.example.xchat.Call_feature.IncomingCallActivity
+import com.google.firebase.database.ChildEventListener
 
 
 class ChatActivity : AppCompatActivity() {
@@ -48,7 +58,12 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var receiverId: String
     private var imageBase64: String? = null
 
-
+    private val CALL_PERMISSIONS = arrayOf(
+        Manifest.permission.CAMERA,
+        Manifest.permission.RECORD_AUDIO
+    )
+    private val REQUEST_CALL_PERMISSIONS = 1001
+    private lateinit var callReference: DatabaseReference
     private val pickImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             result.data?.data?.let { uri ->
@@ -96,6 +111,23 @@ class ChatActivity : AppCompatActivity() {
             intent.putExtra("userId", receiverId)
             startActivity(intent)
         }
+
+
+
+        callReference = FirebaseDatabase.getInstance().getReference("ongoingCalls")
+
+        // Setup call button
+        binding.callButton.setOnClickListener {
+            checkCallPermissions(false) // false for audio call
+        }
+
+        // Optionally add a video call button
+      //  binding.videoCallButton.setOnClickListener {
+      //      checkCallPermissions(true) // true for video call
+      //  }
+
+        // Listen for incoming calls
+        setupCallListener()
 
 
     }
@@ -294,6 +326,174 @@ class ChatActivity : AppCompatActivity() {
             .child(currentUserId).setValue(isTyping)
     }
 
+
+    private fun checkCallPermissions(isVideo: Boolean) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Request permissions
+            ActivityCompat.requestPermissions(
+                this,
+                CALL_PERMISSIONS,
+                if (isVideo) REQUEST_CALL_PERMISSIONS + 1 else REQUEST_CALL_PERMISSIONS
+            )
+        } else {
+            startCall(isVideo)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_CALL_PERMISSIONS -> {
+                if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    startCall(false) // Audio call
+                }
+            }
+            REQUEST_CALL_PERMISSIONS + 1 -> {
+                if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    startCall(true) // Video call
+                }
+            }
+        }
+    }
+
+    private fun startCall(isVideo: Boolean) {
+        val currentUserId = auth.currentUser?.uid ?: return
+
+        // Check if user is already in a call
+        FirebaseDatabase.getInstance().getReference("userStatus")
+            .child(currentUserId)
+            .child("callStatus")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val callStatus = snapshot.getValue(String::class.java) ?: "available"
+
+                    if (callStatus != "available") {
+                        Toast.makeText(
+                            this@ChatActivity,
+                            "You are already in a call",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return
+                    }
+
+                    // Get receiver's call status
+                    FirebaseDatabase.getInstance().getReference("userStatus")
+                        .child(receiverId)
+                        .child("callStatus")
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(receiverSnapshot: DataSnapshot) {
+                                val receiverCallStatus = receiverSnapshot.getValue(String::class.java) ?: "available"
+
+                                if (receiverCallStatus != "available") {
+                                    Toast.makeText(
+                                        this@ChatActivity,
+                                        "User is busy on another call",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    return
+                                }
+
+                                // All checks passed, start the call
+                                proceedWithCall(isVideo)
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {}
+                        })
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    private fun proceedWithCall(isVideo: Boolean) {
+        val currentUserId = auth.currentUser?.uid ?: return
+        val callId = callReference.push().key ?: return
+
+        // Get current user's name for display
+        firestore.collection("users").document(currentUserId)
+            .get()
+            .addOnSuccessListener { currentUserDoc ->
+                val currentUser = auth.currentUser ?: return@addOnSuccessListener
+                val userName = currentUserDoc.getString("name") ?: currentUser.displayName ?: currentUser.email ?: "You"
+
+                // Get receiver's name
+                firestore.collection("users").document(receiverId)
+                    .get()
+                    .addOnSuccessListener { receiverDoc ->
+                        val receiverName = receiverDoc.getString("name") ?: "Unknown"
+
+                        // Create call object
+                        val call = Call(
+                            callId = callId,
+                            callerId = currentUserId,
+                            receiverId = receiverId,
+                            callerName = userName,
+                            receiverName = receiverName,
+                            isVideo = isVideo,  // ← This will save as "isVideo" in Firebase
+                            status = "ringing"
+                        )
+
+                        // Save call to database
+                        callReference.child(callId).setValue(call)
+                            .addOnSuccessListener {
+                                // Start outgoing call activity
+                                startActivity(
+                                    OutgoingCallActivity.newIntent(
+                                    this,
+                                    callId,
+                                    receiverId,
+                                    receiverName,
+                                    isVideo
+                                ))
+                            }
+                    }
+            }
+    }
+
+    private fun setupCallListener() {
+        val currentUserId = auth.currentUser?.uid ?: return
+
+        callReference.orderByChild("receiverId").equalTo(currentUserId)
+            .addChildEventListener(object : ChildEventListener {
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                    val call = snapshot.getValue(Call::class.java) ?: return
+                    if (call.status == "ringing" && call.receiverId == currentUserId) {
+                        // Cancel any existing ringing notifications
+                        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                        manager.cancelAll()
+
+                        // Start incoming call activity
+                        startActivity(
+                            IncomingCallActivity.newIntent(
+                            this@ChatActivity,
+                            call.callId,
+                            call.callerId,
+                            call.callerName,
+                            call.isVideo
+                        ))
+                    }
+                }
+
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+                override fun onChildRemoved(snapshot: DataSnapshot) {}
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    // Add to your existing onPause() method
     override fun onPause() {
         super.onPause()
         updateTypingStatus(false)

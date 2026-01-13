@@ -17,7 +17,6 @@ import com.example.xchat.MainFragments.CallFragment
 import com.example.xchat.MainFragments.ChatFragment
 import com.example.xchat.MainFragments.ProfileFragment
 import com.example.xchat.Ui.AuthActivity
-import com.example.xchat.pushNotifiAndCall.SocketService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -29,14 +28,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var database: FirebaseDatabase
 
-    // In MainActivity.kt
-    private lateinit var socketServiceIntent: Intent
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        stopService(socketServiceIntent)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +37,7 @@ class MainActivity : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         database = FirebaseDatabase.getInstance()
 
-        socketServiceIntent = Intent(this, SocketService::class.java)
-        startService(socketServiceIntent)
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {

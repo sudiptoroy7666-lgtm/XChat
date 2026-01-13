@@ -52,7 +52,7 @@
                     android:layout_height="140dp"
                     android:src="@drawable/profilepicture"
                     app:civ_border_width="2dp"
-                    app:civ_border_color="@color/material_dynamic_primary40" />
+                    app:civ_border_color="@color/white" />
 
 
 

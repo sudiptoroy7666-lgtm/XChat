@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Ringing container -->
+    <LinearLayout
+        android:id="@+id/ringingContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/callerImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/profilepicture"
+            app:civ_border_color="#FFFFFF"
+            app:civ_border_width="2dp"/>
+
+        <TextView
+            android:id="@+id/callerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Caller Name"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:id="@+id/callType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Audio Call"
+            android:textColor="#AAAAAA"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/timerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="00:00"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
+
+    <!-- In-call container (hidden initially) -->
+    <LinearLayout
+        android:id="@+id/inCallContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- Video containers -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <org.webrtc.SurfaceViewRenderer
+                android:id="@+id/remoteRenderer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <org.webrtc.SurfaceViewRenderer
+                android:id="@+id/localRenderer"
+                android:layout_width="120dp"
+                android:layout_height="160dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"/>
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/callStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Connecting..."
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"/>
+
+
+
+    </LinearLayout>
+
+    <!-- Action buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageButton
+            android:id="@+id/declineButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/call_decline_button"
+            android:contentDescription="Decline call"/>
+
+        <ImageButton
+            android:id="@+id/acceptButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/call_accept_button"
+            android:contentDescription="Accept call"/>
+
+        <ImageButton
+            android:id="@+id/declineButtonInCall"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="32dp"
+            android:background="@drawable/call_decline_button"
+            android:contentDescription="End call"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

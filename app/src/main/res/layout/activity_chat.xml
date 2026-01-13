@@ -49,7 +49,7 @@
             android:id="@+id/call_button"
             android:background="@drawable/call_vector"
             android:layout_toEndOf="@id/nameOfCUser"
-            android:layout_marginLeft="130dp"
+            android:layout_marginLeft="110dp"
 
 
             >
