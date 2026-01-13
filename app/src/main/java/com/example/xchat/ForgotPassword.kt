@@ -1,5 +1,6 @@
 package com.example.xchat
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -7,6 +8,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
+import com.example.xchat.Ui.AuthActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class ForgotPassword : AppCompatActivity() {
@@ -28,6 +30,13 @@ class ForgotPassword : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         goback = findViewById(R.id.backtoSignin)
+
+        goback.setOnClickListener {
+            Intent(this, AuthActivity::class.java).also {
+                startActivity(it)
+            }
+        }
+
 
         send.setOnClickListener {
             val email = email.text.toString().trim()

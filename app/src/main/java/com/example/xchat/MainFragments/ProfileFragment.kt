@@ -72,7 +72,7 @@ class ProfileFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
         firestore = FirebaseFirestore.getInstance()
-        DeleteAcc = view.findViewById(R.id.DeleteAccButton)
+        DeleteAcc = view.findViewById(R.id.deleteAccButton)
 
 
         setupUI()
@@ -326,8 +326,7 @@ class ProfileFragment : Fragment() {
                 loadFromRealtimeDatabase(userId)
             }
 
-        // Load realtime status
-        loadRealtimeStatus(userId)
+
     }
 
     private fun loadFromRealtimeDatabase(userId: String) {
@@ -352,30 +351,6 @@ class ProfileFragment : Fragment() {
             })
     }
 
-    private fun loadRealtimeStatus(userId: String) {
-        database.reference.child("userStatus").child(userId)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val safeBinding = _binding ?: return
-
-                    if (snapshot.exists()) {
-                        val isActive = snapshot.child("isActive").getValue(Boolean::class.java) ?: false
-                        val lastSeen = snapshot.child("lastSeen").getValue(String::class.java) ?: ""
-
-                        safeBinding.activeStatus.text = if (isActive) {
-                            "Online"
-                        } else {
-                            "Last seen: $lastSeen"
-                        }
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("ViewProfile", "Error loading realtime status", error.toException())
-                }
-            })
-    }
-
 
     private fun displayUserData(userData: Map<String, Any>) {
         val safeBinding = _binding ?: return  // Exit if view destroyed
@@ -384,7 +359,14 @@ class ProfileFragment : Fragment() {
         safeBinding.statusEditText.setText(userData["status"] as? String ?: "Hey there!")
         safeBinding.emailEditText.setText(userData["email"] as? String ?: "")
         safeBinding.emailEditText.isEnabled = false
+// FIX: Get email from database FIRST, then fallback to Firebase Auth
+        val emailFromDb = userData["email"] as? String
+        val currentUserEmail = auth.currentUser?.email
 
+        // Prefer database email if exists, otherwise use Firebase Auth email
+        val emailToShow = emailFromDb ?: currentUserEmail ?: ""
+        safeBinding.emailEditText.setText(emailToShow)
+        safeBinding.emailEditText.isEnabled = false  // Keep disabled as intended
         val emailNotifications = userData["emailNotifications"] as? Boolean ?: true
      //   binding.emailNotificationsSwitch.isChecked = emailNotifications
 

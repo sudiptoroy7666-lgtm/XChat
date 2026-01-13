@@ -7,8 +7,10 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
+    <!-- Progress indicator centered -->
     <ProgressBar
         android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -20,113 +22,209 @@
     <ScrollView
         android:id="@+id/contentLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible">
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="24dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profileImage"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:src="@drawable/profilepicture"
+            <!-- Profile header section -->
+            <LinearLayout
+                android:id="@+id/profileHeader"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/activeStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/profileImage" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profileImage"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:src="@drawable/profilepicture"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="@color/material_dynamic_primary40" />
 
-            <EditText
-                android:id="@+id/nameEditText"
-                android:layout_width="match_parent"
+
+
+            </LinearLayout>
+
+            <!-- Profile form section -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/nameInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="32dp"
                 android:hint="Name"
-                android:inputType="textPersonName"
-                android:textSize="18sp"
-                app:layout_constraintTop_toBottomOf="@id/activeStatus" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileHeader">
 
-            <EditText
-                android:id="@+id/statusEditText"
-                android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:textSize="16sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/statusInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Status"
-                android:inputType="text"
-                app:layout_constraintTop_toBottomOf="@id/nameEditText" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/nameInputLayout">
 
-            <EditText
-                android:id="@+id/emailEditText"
-                android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/statusEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLines="2"
+                    android:textSize="16sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emailInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Email"
-                android:inputType="textEmailAddress"
-                app:layout_constraintTop_toBottomOf="@id/statusEditText" />
-
-
-            <Button
-                android:id="@+id/DeleteAccButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="84dp"
-                android:layout_marginEnd="72dp"
-                android:text="Delete Account"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/logoutButton" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/statusInputLayout">
 
-            <Button
-                android:id="@+id/logoutButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="128dp"
-                android:text="Logout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/profileEdit" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/emailEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:textSize="16sp" />
 
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Action buttons -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/editActions"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/profileEdit"
                 android:layout_marginTop="32dp"
+                android:gravity="center"
                 android:orientation="horizontal"
-                android:weightSum="2"
-                app:layout_constraintTop_toBottomOf="@id/emailEditText">
+                android:paddingHorizontal="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/emailInputLayout">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/cancelButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:minWidth="120dp"
                     android:text="Cancel"
                     android:visibility="gone" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/editButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:minWidth="120dp"
                     android:text="@string/edit"
-                tools:text="Edit Profile" />
+                    tools:text="Edit Profile" />
+
             </LinearLayout>
 
+            <!-- Danger zone section -->
+            <View
+                android:id="@+id/divider"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="48dp"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/editActions" />
+
+            <TextView
+                android:id="@+id/dangerZoneLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Danger Zone"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider" />
+
+            <LinearLayout
+                android:id="@+id/dangerActions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dangerZoneLabel">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/logoutButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:minWidth="120dp"
+                    android:text="Logout" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/deleteAccButton"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minWidth="120dp"
+                    android:text="Delete Account"
+                    android:textColor="@android:color/holo_red_dark" />
+
+            </LinearLayout>
+
+            <!-- Bottom padding for scroll -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dangerActions" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

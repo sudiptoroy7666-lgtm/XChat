@@ -1,6 +1,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,40 +12,53 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
 
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp">
 
 
-            <ImageButton
-                android:id="@+id/btnBack"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/baseline_arrow_back_24"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/baseline_arrow_back_24" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/receiverProfileImage"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_toEndOf="@id/btnBack"
-                android:layout_marginStart="20dp"
-                android:contentDescription="Profile image"
-                android:scaleType="centerCrop"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/receiverProfileImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@id/btnBack"
+            android:contentDescription="Profile image"
+            android:scaleType="centerCrop" />
 
-            <TextView
-                android:id="@+id/nameOfCUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="User Name"
-                android:textSize="24sp"
+        <TextView
+            android:id="@+id/nameOfCUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:text="User Name"
 
-                android:textColor="@color/black"
-                android:layout_gravity="center_vertical"/>
+            android:textColor="@color/black"
+            android:textSize="24sp" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/call_button"
+            android:background="@drawable/call_vector"
+            android:layout_toEndOf="@id/nameOfCUser"
+            android:layout_marginLeft="130dp"
+
+
+            >
+
+
+        </ImageButton>
 
 
     </androidx.appcompat.widget.Toolbar>
-
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messagesRecyclerView"

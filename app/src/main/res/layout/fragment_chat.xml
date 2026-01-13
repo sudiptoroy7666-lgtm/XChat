@@ -20,10 +20,11 @@
     <!-- Friend Requests Button -->
     <Button
         android:id="@+id/frButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:text="Friend Requests"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/friend"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 

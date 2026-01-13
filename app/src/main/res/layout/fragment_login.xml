@@ -124,7 +124,7 @@
      android:layout_marginTop="30dp"
      android:layout_gravity="center"
      android:textAlignment="center"
-     android:text="Forgot_password ?"
+     android:text="Forgot password ?"
      android:textSize="20sp"
      android:textColor="#6E55CA"
 
