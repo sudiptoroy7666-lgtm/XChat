@@ -17,4 +17,5 @@
     <string name="view_requests" />
     <string name="edit">Edit</string>
     <string name="save">Save</string>
+    <string name="ai_chat">AI Chat</string>
 </resources>

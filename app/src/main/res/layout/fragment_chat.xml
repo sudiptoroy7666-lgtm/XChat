@@ -17,7 +17,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <!-- AI Chat Button -->
+
     <!-- Friend Requests Button -->
+    <ImageButton
+        android:id="@+id/aiChatButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="fitCenter"
+        android:background="@drawable/aichat1"
+        app:layout_constraintStart_toStartOf="@id/searchView"
+        app:layout_constraintBottom_toTopOf="@id/usersRecyclerView"
+        app:layout_constraintTop_toBottomOf="@id/searchView"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="32dp"
+        android:text="Chat with XChat AI"
+        android:textSize="15sp"
+        app:circularflow_viewCenter="@id/aiChatButton"
+        app:layout_constraintBottom_toTopOf="@id/usersRecyclerView"
+        app:layout_constraintStart_toEndOf="@id/aiChatButton">
+
+
+    </TextView>
+
     <Button
         android:id="@+id/frButton"
         android:layout_width="40dp"
@@ -47,7 +74,7 @@
         android:clipToPadding="false"
         android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchView"/>
+        app:layout_constraintTop_toBottomOf="@id/aiChatButton"/>
 
     <!-- Empty State View (same area as RecyclerView) -->
     <TextView

@@ -64,6 +64,9 @@ class ChatFragment : Fragment() {
         binding.frButton.setOnClickListener {
             startActivity(Intent(activity, ViewFriendRequests::class.java))
         }
+        binding.aiChatButton.setOnClickListener {
+            startActivity(Intent(activity, com.example.xchat.AiChatActivity::class.java))
+        }
     }
 
     private fun setupRecyclerView() {

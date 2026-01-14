@@ -82,6 +82,9 @@ dependencies {
     implementation("io.github.webrtc-sdk:android:137.7151.05")
    // implementation("com.infobip:google-webrtc:1.0.45036")
 
+    // Gemini AI
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
     implementation ("io.socket:socket.io-client:2.1.0") // WebSocket client
 
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")

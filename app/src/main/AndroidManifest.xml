@@ -49,6 +49,9 @@
             android:name=".ChatFunctions.ChatActivity"
             android:exported="false" />
         <activity
+            android:name=".AiChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChatFunctions.ViewFriendRequests"
             android:exported="false" />
         <activity
