@@ -40,7 +40,9 @@ class CallManager( context: Context, private val currentUserId: String ) {
     private lateinit var audioDeviceModule: JavaAudioDeviceModule
 
     private var onCallStateChanged: ((String) -> Unit)? = null
+
     private var onRemoteVideoReady: (() -> Unit)? = null
+    private var isCleanedUp = false
 
     init {
         // ✅ CRITICAL: Initialize WebRTC
@@ -482,7 +484,34 @@ class CallManager( context: Context, private val currentUserId: String ) {
         onRemoteVideoReady = listener
     }
 
+    fun startListeningForIncomingCalls(onCallReceived: (Call) -> Unit) {
+        val currentUserId = currentUserId
+        callRef.orderByChild("receiverId").equalTo(currentUserId)
+            .addChildEventListener(object : com.google.firebase.database.ChildEventListener {
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                    val call = snapshot.getValue(Call::class.java)
+                    if (call != null && call.status == "ringing") {
+                        onCallReceived(call)
+                    }
+                }
+
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                     val call = snapshot.getValue(Call::class.java)
+                    if (call != null && call.status == "ringing") {
+                        // Double check in case it changed to ringing (rare but possible)
+                         onCallReceived(call)
+                    }
+                }
+                override fun onChildRemoved(snapshot: DataSnapshot) {}
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
     private fun cleanup() {
+        if (isCleanedUp) return
+        isCleanedUp = true
+
         currentCallId?.let { callId ->
             // Update user status
             val currentUserId = currentUserId
@@ -492,28 +521,32 @@ class CallManager( context: Context, private val currentUserId: String ) {
             callRef.child(callId).removeValue()
         }
 
-        // Clean up WebRTC resources
-        remoteVideoTrack?.removeSink(remoteSurfaceView)
-        localVideoTrack?.removeSink(localSurfaceView)
+        try {
+            // Clean up WebRTC resources
+            remoteVideoTrack?.removeSink(remoteSurfaceView)
+            localVideoTrack?.removeSink(localSurfaceView)
 
-        peerConnection?.close()
-        peerConnection = null
+            peerConnection?.close()
+            peerConnection = null
 
-        localAudioTrack.setEnabled(false)
-        localAudioTrack.dispose()
+            localAudioTrack.setEnabled(false)
+            localAudioTrack.dispose()
 
-        localVideoTrack?.setEnabled(false)
-        localVideoTrack?.dispose()
+            localVideoTrack?.setEnabled(false)
+            localVideoTrack?.dispose()
 
-        remoteVideoTrack?.setEnabled(false)
-        remoteVideoTrack?.dispose()
+            remoteVideoTrack?.setEnabled(false)
+            remoteVideoTrack?.dispose()
 
-        localSurfaceView?.release()
-        remoteSurfaceView?.release()
+            localSurfaceView?.release()
+            remoteSurfaceView?.release()
 
-        audioDeviceModule.release()
-        rootEglBase.release()
-
-        executor.shutdown()
+            audioDeviceModule.release()
+            rootEglBase.release()
+            
+            executor.shutdown()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error during cleanup", e)
+        }
     }
 }

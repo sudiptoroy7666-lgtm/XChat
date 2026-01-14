@@ -126,9 +126,6 @@ class ChatActivity : AppCompatActivity() {
       //      checkCallPermissions(true) // true for video call
       //  }
 
-        // Listen for incoming calls
-        setupCallListener()
-
 
     }
 
@@ -462,36 +459,6 @@ class ChatActivity : AppCompatActivity() {
             }
     }
 
-    private fun setupCallListener() {
-        val currentUserId = auth.currentUser?.uid ?: return
-
-        callReference.orderByChild("receiverId").equalTo(currentUserId)
-            .addChildEventListener(object : ChildEventListener {
-                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    val call = snapshot.getValue(Call::class.java) ?: return
-                    if (call.status == "ringing" && call.receiverId == currentUserId) {
-                        // Cancel any existing ringing notifications
-                        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-                        manager.cancelAll()
-
-                        // Start incoming call activity
-                        startActivity(
-                            IncomingCallActivity.newIntent(
-                            this@ChatActivity,
-                            call.callId,
-                            call.callerId,
-                            call.callerName,
-                            call.isVideo
-                        ))
-                    }
-                }
-
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-                override fun onChildRemoved(snapshot: DataSnapshot) {}
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-                override fun onCancelled(error: DatabaseError) {}
-            })
-    }
 
     // Add to your existing onPause() method
     override fun onPause() {

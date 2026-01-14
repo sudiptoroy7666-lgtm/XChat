@@ -13,6 +13,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.xchat.ChatFunctions.ChatActivity
+import com.example.xchat.Call_feature.CallManager
+import com.example.xchat.Call_feature.IncomingCallActivity
 import com.example.xchat.MainFragments.CallFragment
 import com.example.xchat.MainFragments.ChatFragment
 import com.example.xchat.MainFragments.ProfileFragment
@@ -65,6 +67,29 @@ class MainActivity : AppCompatActivity() {
         }
         // Check profile completeness for authenticated users
         checkProfileCompleteness(currentUser.uid)
+        
+        // SELF-HEALING: Reset call status to "available" on app launch
+        // This ensures that if the app crashed or was killed while in a call,
+        // the user doesn't get stuck in "in_call" status.
+        FirebaseDatabase.getInstance().getReference("userStatus")
+            .child(currentUser.uid)
+            .child("callStatus")
+            .setValue("available")
+
+
+        // Initialize CallManager to listen for incoming calls
+        val callManager = CallManager(this, currentUser.uid)
+        callManager.startListeningForIncomingCalls { call ->
+            val intent = IncomingCallActivity.newIntent(
+                this,
+                call.callId,
+                call.callerId,
+                call.callerName,
+                call.isVideo
+            )
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(intent)
+        }
     }
 
     private fun checkProfileCompleteness(userId: String) {

@@ -112,7 +112,7 @@
             android:id="@+id/declineButton"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:background="@drawable/call_decline_button"
+            android:background="@drawable/call_end"
             android:contentDescription="End call"/>
 
     </LinearLayout>

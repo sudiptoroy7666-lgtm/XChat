@@ -38,6 +38,7 @@
         android:layout_marginBottom="32dp"
         android:text="Chat with XChat AI"
         android:textSize="15sp"
+        android:id="@+id/gotoaichat"
         app:circularflow_viewCenter="@id/aiChatButton"
         app:layout_constraintBottom_toTopOf="@id/usersRecyclerView"
         app:layout_constraintStart_toEndOf="@id/aiChatButton">

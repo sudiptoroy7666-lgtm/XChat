@@ -50,12 +50,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"/>
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/emailSwitch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Email Notifications"
-            android:enabled="false"
-            android:layout_marginTop="8dp"/>
+
     </LinearLayout>
 </ScrollView>

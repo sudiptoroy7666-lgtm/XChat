@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="#2C3E50">
 
     <!-- Ringing container -->
     <LinearLayout
@@ -106,14 +106,14 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_marginEnd="32dp"
-            android:background="@drawable/call_decline_button"
+            android:background="@drawable/call_end"
             android:contentDescription="Decline call"/>
 
         <ImageButton
             android:id="@+id/acceptButton"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:background="@drawable/call_accept_button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/call_receive"
             android:contentDescription="Accept call"/>
 
         <ImageButton
@@ -121,7 +121,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_marginStart="32dp"
-            android:background="@drawable/call_decline_button"
+            android:background="@drawable/call_end"
             android:contentDescription="End call"
             android:visibility="gone"/>
 

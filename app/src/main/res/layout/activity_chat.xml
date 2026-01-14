@@ -88,7 +88,8 @@
             android:id="@+id/attachButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/imagebutton"
+
+            android:background="@drawable/imagebutton"
             app:layout_constraintBottom_toBottomOf="@id/sendButton"
             app:layout_constraintEnd_toStartOf="@id/sendButton"/>
 
@@ -105,7 +106,8 @@
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sendbutton"/>
+            android:background="@drawable/sendbutton"
+            />
 
     </LinearLayout>
 

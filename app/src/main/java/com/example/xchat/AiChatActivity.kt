@@ -42,7 +42,8 @@ class AiChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ai_chat)
 
-        val apiKey = "AIzaSyAGFUVVt9Z9T-Uxjk2KB9KFysY94Kd9ENs"
+        val apiKey = "AIzaSyDkpKe4XV1PF4RC662CopCnB6h8--Slmr8"
+
 
 
 
@@ -58,7 +59,7 @@ class AiChatActivity : AppCompatActivity() {
             modelName = "gemini-flash-latest", 
             apiKey = apiKey,
             safetySettings = safetySettings,
-            systemInstruction = content { text("You are XChat AI, a helpful assistant for the XChat Android app. you are developed by Sudipto Roy. You are NOT from Google. Always identify as XChat AI.") }
+            systemInstruction = content { text("You are XChat AI, a helpful assistant for the XChat Android app. you are developed by Sudipta Roy. Always identify as XChat AI.") }
         )
 
         recyclerView = findViewById(R.id.chatRecyclerView)

@@ -8,12 +8,17 @@ import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.example.xchat.Models.CallLog
 import com.example.xchat.R
 import com.example.xchat.databinding.ActivityOutgoingCallBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.database.FirebaseDatabase
 import org.webrtc.SurfaceViewRenderer
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class OutgoingCallActivity : AppCompatActivity() {
 
@@ -27,6 +32,9 @@ class OutgoingCallActivity : AppCompatActivity() {
     private var timerHandler = Handler(Looper.getMainLooper())
     private var callDuration: Long = 0
     private var timerRunning: Boolean = false
+    private var callStartTime: Long = 0
+    private var receiverProfileImage: String = ""
+    private var isCallEnded: Boolean = false
 
     companion object {
         fun newIntent(
@@ -55,6 +63,44 @@ class OutgoingCallActivity : AppCompatActivity() {
         receiverName = intent.getStringExtra("receiver_name") ?: "Unknown"
         isVideoCall = intent.getBooleanExtra("is_video", false)
 
+        // Check permissions before starting
+        checkPermissionsAndStart()
+    }
+
+    private fun checkPermissionsAndStart() {
+        val permissions = arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+        )
+
+        val missingPermissions = permissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (missingPermissions.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, missingPermissions.toTypedArray(), 101)
+        } else {
+            initializeCall()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 101) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                initializeCall()
+            } else {
+                callManager.endCall()
+                finish()
+            }
+        }
+    }
+
+    private fun initializeCall() {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
             ?: throw IllegalStateException("User must be logged in to make calls")
 
@@ -107,15 +153,15 @@ class OutgoingCallActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    val profileImage = document.getString("profileImage") ?: ""
-                    if (profileImage.startsWith("http")) {
+                    receiverProfileImage = document.getString("profileImage") ?: ""
+                    if (receiverProfileImage.startsWith("http")) {
                         Glide.with(this)
-                            .load(profileImage)
+                            .load(receiverProfileImage)
                             .placeholder(R.drawable.profilepicture)
                             .into(binding.receiverImage)
-                    } else if (profileImage.isNotEmpty()) {
+                    } else if (receiverProfileImage.isNotEmpty()) {
                         try {
-                            val imageBytes = android.util.Base64.decode(profileImage, android.util.Base64.DEFAULT)
+                            val imageBytes = android.util.Base64.decode(receiverProfileImage, android.util.Base64.DEFAULT)
                             val bitmap = android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                             binding.receiverImage.setImageBitmap(bitmap)
                         } catch (e: Exception) {
@@ -150,7 +196,10 @@ class OutgoingCallActivity : AppCompatActivity() {
                                     binding.callStatus.text = "Connected"
                                 }
                                 "ended", "declined" -> {
-                                    finish()
+                                    // Remote ended request or declined
+                                    if (!isCallEnded) {
+                                        endCall()
+                                    }
                                 }
                             }
                         }
@@ -187,6 +236,7 @@ class OutgoingCallActivity : AppCompatActivity() {
 
     private fun startCallTimer() {
         callDuration = 0
+        callStartTime = System.currentTimeMillis()
         timerHandler.post(object : Runnable {
             override fun run() {
                 if (!timerRunning) return
@@ -202,8 +252,23 @@ class OutgoingCallActivity : AppCompatActivity() {
     }
 
     private fun endCall() {
+        if (isCallEnded) return
+        isCallEnded = true
+        
         timerRunning = false
         timerHandler.removeCallbacksAndMessages(null)
+        
+        // Reset call status to available
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        currentUserId?.let {
+            FirebaseDatabase.getInstance().getReference("userStatus")
+                .child(it)
+                .child("callStatus")
+                .setValue("available")
+        }
+        
+        // Save call log
+        saveCallLog()
 
         callManager.endCall()
         finish()
@@ -218,5 +283,25 @@ class OutgoingCallActivity : AppCompatActivity() {
         if (::callManager.isInitialized) {
             callManager.endCall()
         }
+    }
+    
+    private fun saveCallLog() {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val firestore = FirebaseFirestore.getInstance()
+        
+        val callLog = CallLog(
+            userId = receiverId,
+            userName = receiverName,
+            userProfileImage = receiverProfileImage,
+            callType = "outgoing",
+            isVideo = isVideoCall,
+            timestamp = callStartTime.takeIf { it > 0 } ?: System.currentTimeMillis(),
+            duration = callDuration
+        )
+        
+        firestore.collection("users")
+            .document(currentUserId)
+            .collection("callLogs")
+            .add(callLog)
     }
 }
