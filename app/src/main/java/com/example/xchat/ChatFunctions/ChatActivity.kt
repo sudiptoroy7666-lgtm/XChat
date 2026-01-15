@@ -218,10 +218,36 @@ class ChatActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         adapter = MessageAdapter(auth.currentUser?.uid ?: "")
-        binding.messagesRecyclerView.apply {
-            layoutManager = LinearLayoutManager(this@ChatActivity)
-            adapter = this@ChatActivity.adapter
+        val linearLayoutManager = LinearLayoutManager(this@ChatActivity).apply {
+            stackFromEnd = true
         }
+        binding.messagesRecyclerView.apply {
+            layoutManager = linearLayoutManager
+            adapter = this@ChatActivity.adapter
+            
+            // Scroll to bottom when keyboard opens (layout resizes)
+            addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
+                if (bottom < oldBottom) {
+                    postDelayed({
+                        if (adapter != null && adapter!!.itemCount > 0) {
+                            scrollToPosition(adapter!!.itemCount - 1)
+                        }
+                    }, 100)
+                }
+            }
+        }
+        
+        // Auto-scroll when new messages are added
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                binding.messagesRecyclerView.post {
+                     if (adapter.itemCount > 0) {
+                        binding.messagesRecyclerView.smoothScrollToPosition(adapter.itemCount - 1)
+                     }
+                }
+            }
+        })
     }
 
     private fun loadMessages() {
@@ -239,7 +265,6 @@ class ChatActivity : AppCompatActivity() {
                 } ?: emptyList()
 
                 adapter.submitList(messages)
-                binding.messagesRecyclerView.scrollToPosition(adapter.itemCount - 1)
             }
     }
     private fun convertImageToBase64(uri: Uri): String {
@@ -286,10 +311,12 @@ class ChatActivity : AppCompatActivity() {
 
         chatDocRef.collection("messages").add(message)
             .addOnSuccessListener {
-                chatDocRef.update(
-                    "lastMessage", if (image.isNotEmpty()) "📷 Photo" else messageText,
-                    "lastMessageTime", System.currentTimeMillis()
+                // Use set() with merge to create the document if it doesn't exist
+                val updates = mapOf(
+                    "lastMessage" to (if (image.isNotEmpty()) "📷 Photo" else messageText),
+                    "lastMessageTime" to System.currentTimeMillis()
                 )
+                chatDocRef.set(updates, SetOptions.merge())
 
 
 

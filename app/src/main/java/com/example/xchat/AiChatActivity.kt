@@ -42,11 +42,8 @@ class AiChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ai_chat)
 
-        val apiKey = "AIzaSyDkpKe4XV1PF4RC662CopCnB6h8--Slmr8"
-
-
-
-
+        val apiKey = BuildConfig.GEMINI_API_KEY
+        
         // Config with Safety Settings to prevent generic block errors
         val safetySettings = listOf(
             SafetySetting(HarmCategory.HARASSMENT, BlockThreshold.ONLY_HIGH),
@@ -59,7 +56,7 @@ class AiChatActivity : AppCompatActivity() {
             modelName = "gemini-flash-latest", 
             apiKey = apiKey,
             safetySettings = safetySettings,
-            systemInstruction = content { text("You are XChat AI, a helpful assistant for the XChat Android app. you are developed by Sudipta Roy. Always identify as XChat AI.") }
+            systemInstruction = content { text("You are XChat AI, a helpful assistant developed by Sudipta Roy. Provide helpful, concise answers.") }
         )
 
         recyclerView = findViewById(R.id.chatRecyclerView)
@@ -72,6 +69,17 @@ class AiChatActivity : AppCompatActivity() {
             stackFromEnd = true
         }
         recyclerView.adapter = adapter
+        
+        // Scroll to bottom when keyboard opens
+        recyclerView.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
+             if (bottom < oldBottom) {
+                 recyclerView.postDelayed({
+                     if (messages.isNotEmpty()) {
+                         recyclerView.scrollToPosition(messages.size - 1)
+                     }
+                 }, 100)
+             }
+        }
 
         sendButton.setOnClickListener {
             sendMessage()
@@ -164,7 +172,7 @@ class AiChatActivity : AppCompatActivity() {
         messages.add(userMsg)
         saveMessageToFirestore(userMsg)
         adapter.notifyItemInserted(messages.size - 1)
-        recyclerView.scrollToPosition(messages.size - 1)
+        recyclerView.smoothScrollToPosition(messages.size - 1) // Smooth scroll is better for "sending"
         messageInput.text.clear()
 
         progressBar.visibility = View.VISIBLE
@@ -180,7 +188,7 @@ class AiChatActivity : AppCompatActivity() {
                         messages.add(botMsg)
                         saveMessageToFirestore(botMsg)
                         adapter.notifyItemInserted(messages.size - 1)
-                        recyclerView.scrollToPosition(messages.size - 1)
+                        recyclerView.smoothScrollToPosition(messages.size - 1)
                     } else {
                         // If text is null, it might be blocked or empty
                          Toast.makeText(this@AiChatActivity, "Response was empty or blocked.", Toast.LENGTH_LONG).show()

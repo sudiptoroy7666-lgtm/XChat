@@ -37,7 +37,7 @@ import com.google.firebase.firestore.FirebaseFirestore
                                 binding.nameText.text = doc.getString("name")
                                 binding.statusText.text = doc.getString("status")
                                 binding.emailText.text = doc.getString("email")
-                                binding.callStatusText.text = "Call status: ${doc.getString("callStatus")}"
+
 
                                 val profileImage = doc.getString("profileImage") ?: ""
                                 if (profileImage.startsWith("http")) {

@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -14,6 +17,17 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
+        // Load API Key from local.properties
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localProperties.load(FileInputStream(localPropertiesFile))
+        }
+        val geminiApiKey = localProperties.getProperty("gemini.api.key") ?: ""
+
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
+
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -36,6 +50,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -90,11 +105,13 @@ dependencies {
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")
 
     implementation("com.google.code.gson:gson:2.8.8")
+    
+    // WorkManager (Fix for Android 12 crashes related to PendingIntent)
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
 
-
-        implementation ("com.google.android.gms:play-services-base:18.10.0")
-        // or the specific service you're using:
-        implementation ("com.google.android.gms:play-services-location:21.3.0")
+    implementation ("com.google.android.gms:play-services-base:18.10.0")
+    // or the specific service you're using:
+    implementation ("com.google.android.gms:play-services-location:21.3.0")
 
 }

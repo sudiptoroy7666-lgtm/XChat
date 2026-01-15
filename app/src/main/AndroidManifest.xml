@@ -22,6 +22,10 @@
         android:name="android.hardware.microphone"
         android:required="true" />
 
+    <queries>
+        <package android:name="com.google.android.gms" />
+    </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -52,9 +56,11 @@
         <activity
             android:name=".ChatFunctions.ChatActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".AiChatActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ChatFunctions.ViewFriendRequests"

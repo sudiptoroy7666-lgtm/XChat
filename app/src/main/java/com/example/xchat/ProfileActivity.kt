@@ -96,6 +96,11 @@ class ProfileActivity : AppCompatActivity() {
 
 
     private fun showFriendProfileFragment() {
+        // Hide parent activity views to avoid duplication
+        binding.profileImage.visibility = View.GONE
+        binding.userName.visibility = View.GONE
+        binding.userStatus.visibility = View.GONE
+        
         val bundle = Bundle().apply {
             putString("userId", userId)
         }
