@@ -116,16 +116,16 @@ val encrypted = AESHelper.encrypt(message, key)
 
 <p align="center">
   <img src="https://github.com/sudiptoroy7666-lgtm/portfolio/blob/fbc009ea41d89c1956497af02910183aa3dd1ecc/x1.jpg" width="18%"/>
-  <img src="assets/screenshots/xchat/x2.jpg" width="18%"/>
-  <img src="assets/screenshots/xchat/x3.jpg" width="18%"/>
-  <img src="assets/screenshots/xchat/x4.jpg" width="18%"/>
-  <img src="assets/screenshots/xchat/x5.jpg" width="18%"/>
+  <img src="https://github.com/sudiptoroy7666-lgtm/portfolio/blob/fbc009ea41d89c1956497af02910183aa3dd1ecc/x2.jpg" width="18%"/>
+  <img src="https://github.com/sudiptoroy7666-lgtm/portfolio/blob/fbc009ea41d89c1956497af02910183aa3dd1ecc/x3.jpg" width="18%"/>
+  <img src="https://github.com/sudiptoroy7666-lgtm/portfolio/blob/fbc009ea41d89c1956497af02910183aa3dd1ecc/x4.jpg" width="18%"/>
+  <img src="https://github.com/sudiptoroy7666-lgtm/portfolio/blob/fbc009ea41d89c1956497af02910183aa3dd1ecc/x5.jpg" width="18%"/>
 </p>
 <p align="center">
-  <img src="assets/screenshots/xchat/x6.jpg" width="18%"/>
-  <img src="assets/screenshots/xchat/x7.jpg" width="18%"/>
-  <img src="assets/screenshots/xchat/x8.jpg" width="18%"/>
-  <img src="assets/screenshots/xchat/x9.jpg" width="18%"/>
+  <img src="https://github.com/sudiptoroy7666-lgtm/portfolio/blob/fbc009ea41d89c1956497af02910183aa3dd1ecc/x6.jpg" width="18%"/>
+  <img src="https://github.com/sudiptoroy7666-lgtm/portfolio/blob/fbc009ea41d89c1956497af02910183aa3dd1ecc/x7.jpg" width="18%"/>
+  <img src="https://github.com/sudiptoroy7666-lgtm/portfolio/blob/fbc009ea41d89c1956497af02910183aa3dd1ecc/x8.jpg" width="18%"/>
+  <img src="https://github.com/sudiptoroy7666-lgtm/portfolio/blob/fbc009ea41d89c1956497af02910183aa3dd1ecc/x9.jpg" width="18%"/>
 </p>
 
 ---
